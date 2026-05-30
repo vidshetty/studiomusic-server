@@ -1,1 +1,6 @@
 server-go/.env
+server-go/hls-archive
+server-go/track-archive
+server-go/script.go
+server-go/test.go
+test.json
