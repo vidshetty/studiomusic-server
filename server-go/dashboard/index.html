@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="color-scheme" content="dark" />
+  <title>Upload Dashboard</title>
+  <link rel="icon" href="/dashboard/favicon.ico" sizes="any" />
+  <link rel="icon" href="/dashboard/latest-blueblack-black.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <link rel="stylesheet" href="/dashboard/index.css" />
+</head>
+<body>
+  <header class="app-bar">
+    <div class="app-bar-start">
+      <a href="/dashboard" class="app-bar-brand">
+        <img
+          class="brand-logo"
+          src="/dashboard/latest-blueblack-black.svg"
+          alt=""
+          width="40"
+          height="40"
+        />
+      </a>
+    </div>
+    <div class="app-bar-actions">
+      <a class="btn btn-text" href="/dashboard/auth/logout">
+        <span class="material-symbols-outlined" style="font-size:20px">logout</span>
+        Sign out
+      </a>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-header">
+      <h2 class="page-title">Upload content</h2>
+      <p class="page-desc">
+        Fill in album and track metadata, then upload audio and lyrics files.
+      </p>
+    </div>
+
+    <section class="section">
+
+      <div class="grid grid--metadata">
+        <article class="card card--wide" id="album-meta-card">
+          <div class="card-header">
+            <div class="card-icon-wrap lyrics">
+              <span class="material-symbols-outlined filled">album</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Album details</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="album-meta-form" class="form" novalidate>
+              <div class="text-field">
+                <label class="text-field-label" for="album-album-id">_albumId</label>
+                <div class="input-row">
+                  <input
+                    class="text-field-input text-field-input--mono"
+                    type="text"
+                    id="album-album-id"
+                    name="_albumId"
+                    placeholder="24-char hex ObjectId"
+                    pattern="[a-fA-F0-9]{24}"
+                    readonly
+                  />
+                  <button type="button" class="btn btn-tonal btn-compact" id="gen-album-id">
+                    Generate
+                  </button>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="album-name">Album</label>
+                  <input class="text-field-input" type="text" id="album-name" name="Album" required placeholder="Midnight Sessions" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="album-artist">Album artist</label>
+                  <input class="text-field-input" type="text" id="album-artist" name="AlbumArtist" required placeholder="Artist name" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="album-year">Year</label>
+                  <input class="text-field-input" type="text" id="album-year" name="Year" required placeholder="2025" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="album-type">Type</label>
+                  <select class="text-field-input" id="album-type" name="Type" required>
+                    <option value="Album">Album</option>
+                    <option value="Single">Single</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="album-color">Color</label>
+                  <input class="text-field-input" type="text" id="album-color" name="Color" required placeholder="#066BFF" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="album-release">Release date</label>
+                  <input class="text-field-input" type="date" id="album-release" name="releaseDate" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="album-light">Light color <span class="optional">(optional)</span></label>
+                  <input class="text-field-input" type="text" id="album-light" name="LightColor" placeholder="#aecbfa" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="album-dark">Dark color <span class="optional">(optional)</span></label>
+                  <input class="text-field-input" type="text" id="album-dark" name="DarkColor" placeholder="#174ea6" />
+                </div>
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="album-thumbnail">Thumbnail URL</label>
+                <input class="text-field-input" type="url" id="album-thumbnail" name="Thumbnail" required placeholder="https://…" />
+              </div>
+              <div class="form-actions form-actions--split">
+                <button type="button" class="btn btn-text" id="album-meta-reset">Reset</button>
+                <button type="submit" class="btn btn-filled" id="album-meta-submit">
+                  <span class="btn-label">Save album</span>
+                  <span class="spinner hidden" id="album-meta-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="banner hidden status" id="album-meta-status" role="status">
+              <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+              <span class="banner-text status-text"></span>
+            </div>
+            <pre class="json-preview hidden" id="album-meta-preview" aria-label="Album JSON preview"></pre>
+          </div>
+        </article>
+
+        <article class="card card--wide" id="track-meta-card">
+          <div class="card-header">
+            <div class="card-icon-wrap track">
+              <span class="material-symbols-outlined filled">library_music</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Track details</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="track-meta-form" class="form" novalidate>
+              <div class="text-field album-search">
+                <label class="text-field-label" for="track-album-search">Search album</label>
+                <input
+                  class="text-field-input"
+                  type="search"
+                  id="track-album-search"
+                  placeholder="Album or artist name…"
+                  autocomplete="off"
+                />
+                <ul class="album-search-results hidden" id="track-album-results" role="listbox"></ul>
+                <p class="album-search-selected hidden" id="track-album-selected"></p>
+                <span class="text-field-support">Type to search; only matching albums are shown.</span>
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="track-meta-album-id">_albumId</label>
+                <input
+                  class="text-field-input text-field-input--mono"
+                  type="text"
+                  id="track-meta-album-id"
+                  name="_albumId"
+                  placeholder="Filled when you pick a search result"
+                  pattern="[a-fA-F0-9]{24}"
+                  readonly
+                />
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="track-meta-track-id">_trackId</label>
+                <div class="input-row">
+                  <input
+                    class="text-field-input text-field-input--mono"
+                    type="text"
+                    id="track-meta-track-id"
+                    name="_trackId"
+                    placeholder="24-char hex ObjectId"
+                    pattern="[a-fA-F0-9]{24}"
+                    readonly
+                  />
+                  <button type="button" class="btn btn-tonal btn-compact" id="gen-track-id">
+                    Generate
+                  </button>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="track-meta-title">Title</label>
+                  <input class="text-field-input" type="text" id="track-meta-title" name="Title" required placeholder="Track title" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="track-meta-artist">Artist</label>
+                  <input class="text-field-input" type="text" id="track-meta-artist" name="Artist" required placeholder="Artist name" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="track-meta-url">URL</label>
+                  <input class="text-field-input text-field-input--mono" type="text" id="track-meta-url" name="url" required placeholder="tracks/…/output.m3u8" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="track-meta-duration">Duration</label>
+                  <input class="text-field-input" type="text" id="track-meta-duration" name="Duration" required placeholder="3:45" />
+                </div>
+              </div>
+              <div class="form-row form-row--checks">
+                <label class="check-field">
+                  <input type="checkbox" id="track-meta-lyrics" name="lyrics" />
+                  <span>lyrics</span>
+                </label>
+                <label class="check-field">
+                  <input type="checkbox" id="track-meta-sync" name="sync" />
+                  <span>sync</span>
+                </label>
+                <div class="text-field text-field--inline">
+                  <label class="text-field-label" for="track-meta-stream">streamCount</label>
+                  <input class="text-field-input" type="number" id="track-meta-stream" name="streamCount" min="0" value="0" />
+                </div>
+              </div>
+              <div class="form-actions form-actions--split">
+                <button type="button" class="btn btn-text" id="track-meta-reset">Reset</button>
+                <button type="submit" class="btn btn-tonal" id="track-meta-submit">
+                  <span class="btn-label">Save track</span>
+                  <span class="spinner hidden" id="track-meta-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="banner hidden status" id="track-meta-status" role="status">
+              <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+              <span class="banner-text status-text"></span>
+            </div>
+            <pre class="json-preview hidden" id="track-meta-preview" aria-label="Track JSON preview"></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h3 class="section-title">File uploads</h3>
+      <div class="grid">
+      <!-- Track upload -->
+      <article class="card" id="track-card">
+        <div class="card-header">
+          <div class="card-icon-wrap track">
+            <span class="material-symbols-outlined filled">audio_file</span>
+          </div>
+          <div class="card-heading">
+            <h3 class="card-title">Upload track</h3>
+            <p class="card-desc">MP3 file · converted to HLS via ffmpeg</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form id="track-form" class="form" novalidate>
+            <div class="text-field">
+              <label class="text-field-label" for="track-title">Track title</label>
+              <input
+                class="text-field-input"
+                type="text"
+                id="track-title"
+                name="track_title"
+                placeholder="Midnight Drive"
+                autocomplete="off"
+                required
+              />
+              <span class="text-field-support">Used as the S3 folder name (spaces removed, symbols normalized).</span>
+            </div>
+
+            <div class="upload-area dropzone" id="track-dropzone" tabindex="0" role="button" aria-label="Choose MP3 file">
+              <input type="file" id="track-file" name="file" accept="audio/mpeg,.mp3" hidden />
+              <div class="upload-area-inner" id="track-dropzone-inner">
+                <div class="upload-area-icon">
+                  <span class="material-symbols-outlined">upload_file</span>
+                </div>
+                <p class="upload-area-text">
+                  Drag MP3 here or <span class="upload-area-link">browse files</span>
+                </p>
+                <p class="upload-area-meta" id="track-file-name">No file selected</p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-filled" id="track-submit">
+                <span class="btn-label">Upload track</span>
+                <span class="spinner hidden" id="track-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+
+          <div class="banner hidden status" id="track-status" role="status">
+            <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+            <span class="banner-text status-text"></span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Lyrics upload -->
+      <article class="card" id="lyrics-card">
+        <div class="card-header">
+          <div class="card-icon-wrap lyrics">
+            <span class="material-symbols-outlined">lyrics</span>
+          </div>
+          <div class="card-heading">
+            <h3 class="card-title">Upload lyrics</h3>
+            <p class="card-desc">JSON file · stored in S3 lyrics bucket</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form id="lyrics-form" class="form" novalidate>
+            <div class="text-field">
+              <label class="text-field-label" for="lyrics-filename">Filename</label>
+              <input
+                class="text-field-input"
+                type="text"
+                id="lyrics-filename"
+                name="filename"
+                placeholder="MidnightDrive.json"
+                autocomplete="off"
+                required
+              />
+              <span class="text-field-support">Stored as <code>lyrics/&lt;filename&gt;</code>. Include the <code>.json</code> extension.</span>
+            </div>
+
+            <div class="upload-area dropzone" id="lyrics-dropzone" tabindex="0" role="button" aria-label="Choose JSON file">
+              <input type="file" id="lyrics-file" name="file" accept="application/json,.json" hidden />
+              <div class="upload-area-inner" id="lyrics-dropzone-inner">
+                <div class="upload-area-icon">
+                  <span class="material-symbols-outlined">description</span>
+                </div>
+                <p class="upload-area-text">
+                  Drag JSON here or <span class="upload-area-link">browse files</span>
+                </p>
+                <p class="upload-area-meta" id="lyrics-file-name">No file selected</p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-tonal" id="lyrics-submit">
+                <span class="btn-label">Upload lyrics</span>
+                <span class="spinner hidden" id="lyrics-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+
+          <div class="banner hidden status" id="lyrics-status" role="status">
+            <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+            <span class="banner-text status-text"></span>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <aside class="info-panel">
+      <div class="info-panel-icon" aria-hidden="true">
+        <span class="material-symbols-outlined">info</span>
+      </div>
+      <div class="info-panel-content">
+        <h4 class="info-panel-title">Before you upload</h4>
+        <ul class="info-panel-list">
+          <li>Album and track metadata are saved via the API (proxied to the TS server).</li>
+          <li>Track upload may take a minute while ffmpeg encodes HLS segments.</li>
+          <li>Lyrics filename should match <code>GET /lyrics?name=…</code>.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <p>Signed in with Google</p>
+  </footer>
+
+  <script src="/dashboard/index.js" defer></script>
+</body>
+</html>

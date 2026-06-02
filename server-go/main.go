@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	mainrouter "server_go/main-router"
+	"server_go/services/auth"
 	envhandler "server_go/services/env_handler"
 	s3handler "server_go/services/s3_handler"
 
@@ -15,6 +16,9 @@ func main() {
 
 	envhandler.Init()
 	s3handler.Init()
+	if err := auth.Init(); err != nil {
+		log.Fatalln("Failed to init auth", err)
+	}
 
 	app := gin.Default()
 
