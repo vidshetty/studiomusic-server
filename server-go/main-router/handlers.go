@@ -286,6 +286,8 @@ func uploadTrack(c *gin.Context) {
 
 func hlsListen(c *gin.Context) {
 
+	fmt.Println("headers", c.Request.Header)
+
 	var err error = nil
 
 	defer func() {
