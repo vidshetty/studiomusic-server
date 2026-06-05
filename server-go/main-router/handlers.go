@@ -214,9 +214,9 @@ func uploadTrack(c *gin.Context) {
 	}
 
 	defer func() {
-		err = os.RemoveAll(tempDir)
-		if err != nil {
-			fmt.Println("error deleting temp folder", err.Error())
+		osErr := os.RemoveAll(tempDir)
+		if osErr != nil {
+			fmt.Println("error deleting temp folder", osErr.Error())
 		}
 	}()
 
