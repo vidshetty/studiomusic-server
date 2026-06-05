@@ -1,0 +1,41 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "type": "play_release",
+            "package_name": "com.app.studiomusic",
+            "sha256_cert_fingerprints": [
+                "35:B5:54:08:8B:43:20:07:BE:85:87:50:2A:9C:13:D1:3A:6F:BA:F2:6E:23:08:51:C5:B3:52:B5:ED:49:74:CF"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "type": "debug",
+            "package_name": "com.app.studiomusic",
+            "sha256_cert_fingerprints": [
+                "7F:46:29:14:43:36:68:97:F9:0A:C4:65:FC:A8:D8:1F:7B:19:8D:18:01:5E:71:7B:D8:00:EB:63:79:37:09:70"
+            ]
+        }
+    },
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "type": "release",
+            "package_name": "com.app.studiomusic",
+            "sha256_cert_fingerprints": [
+                "20:6D:A3:E9:B2:82:36:D4:53:E5:53:1A:1B:1E:7A:2E:AC:BD:09:B3:01:3E:91:61:8F:7F:7F:DB:52:62:BE:B2"
+            ]
+        }
+    }
+]

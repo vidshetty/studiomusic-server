@@ -4,3 +4,6 @@ server-go/track-archive
 server-go/script.go
 server-go/test.go
 test.json
+server-ts/ENV
+server-ts/others
+server-ts/node_modules

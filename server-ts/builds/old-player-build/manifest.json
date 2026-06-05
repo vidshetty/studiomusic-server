@@ -1,0 +1,36 @@
+{
+    "short_name": "StudioMusic",
+    "name": "StudioMusic",
+    "icons": [
+        {
+            "src": "16x16.png",
+            "type": "image/png",
+            "sizes": "16x16"   
+        },
+        {
+            "src": "32x32.png",
+            "type": "image/png",
+            "sizes": "32x32"   
+        },
+        {
+            "src": "192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "512x512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        },
+        {
+            "src": "512x512.svg",
+            "type": "image/svg",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "https://player.studiomusic.app",
+    "background_color": "#030303",
+    "display": "minimal-ui",
+    "theme_color": "#030303",
+    "description": "Music For Everyone"
+}

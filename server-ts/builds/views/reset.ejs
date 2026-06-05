@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../build/latest-bluewhite.svg" type="image/x-icon">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet"> -->
+    <title>Reset Password</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .table{
+            width: 50%;
+            background-color: #030303;
+            border-collapse: collapse;
+        }
+        .row,.row-small{
+            width: 100%;
+            height: auto;
+            /* background-color: aqua; */
+        }
+        .row{
+            padding: 50px 20px;
+        }
+        .row-small{
+            padding: 30px 20px;
+        }
+        .studio-img{
+            width: 100px;
+            height: auto;
+        }
+        .p{
+            font-size: 2.5em;
+            color: white;
+            font-weight: 600;
+        }
+        .p-small{
+            font-size: 1em;
+            color: white;
+            font-weight: 500;
+        }
+        .p-smaller{
+            font-size: 0.8em;
+            color: white;
+        }
+        .button{
+            width: auto;
+            height: 40px;
+            padding: 0px 30px;
+            outline: none;
+            border: none;
+            border-radius: 3px;
+            color: white;
+            background-color: blue;
+            cursor: pointer;
+        }
+        .row-small.top{
+            padding-top: 0px;
+        }
+        .row.bottom{
+            padding-top: 30px;
+        }
+        @media screen and (max-width: 500px) {
+            .table{
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <center>
+    <div style="width: 90%; background-color: #030303;">
+    <center>
+    <table class="table">
+        <tr>
+            <td class="row">
+                <img src="https://lh3.googleusercontent.com/ophCSN0VOhfR75l2PAAkOY1TzJAIEltmPuNlYiWhReh99fNqfwG1TIzEavB0zgVdVla4JGCQitIyWvMpCRY8dz13gmyp2KKG8COah2VcbpiBKW7-qSG-BKMJihDFLaQd7_cg74tDr3DJU6nW60kOL7JK5Wyj8KK9V4j1pXIxs8b_KNa7ljGMsly8FCmDvyImwVR3YmOBkLN_2tQ_eCaiNS6_w4RvJzHP9BZc68ixYjZBYfSrlScSZ-9lQ18cuqo_sbITmbPxS_6FoAbjBHiOPCuwmdtgZJOwPs9SspCukG3eeTyntPsn8QCcrRduUvkv5rdPqpvThPR8zW3u1JL-SULVqyeqFhcbH6GVXBV0MmXnrKtJhUVr804AOlVRWukNALNkODmYz_ARYu4Xp_lQDeReAcC35w0QSbJ0EBXmhRXOATXw1oFOY2R2H0NHvR_F1gI7zASwRuypGaz7_51MV4OY4b51AvNUSpuJxqFR9uZIcpTkv_Izdox0_TxyCbsIWEZLebh0ebszQvfAp8GLTVgLpOCT4Ux3r0M5YfVtEldFHxuq6H-4vo9tXpOnsOQIrMWYRYhnkqgCSdT-udkLySlA7iWCF1lKPBNxP-qD5Obf_WvtTqiivuye3yunLK3ykbaCfuYxIyyr7cJLhH2kushbQNNz-RoUMgdiCo97s7CHDiemdjMbiTAejYHM_pRaaVrm3dcMPifDdhyFEa5m8oo=w1366-h479-no" alt="Studio" class="studio-img"></img>
+            </td>
+        </tr>
+        <tr>
+            <td class="row-small top">
+                <p class="p">Secure your account</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="row-small">
+                <p class="p-small">Hi <b><%=username%></b>, click on the button below to reset your password.</p>
+                <p class="p-small">If you are unaware of this, you can safely ignore this e-mail.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="row bottom">
+                <a href="https://studioserver.herokuapp.com/reset-password/<%=userId%>/<%=uid%>">
+                    <button class="button">Reset Password</button>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td class="row-small">
+                <p class="p-smaller">if you are not able to view the above button, <a href="https://studioserver.herokuapp.com/reset-password/<%=userId%>/<%=uid%>">click here</a> to reset your password.</p>
+                <p class="p-smaller">This link is valid for <%=expiryTime%> hours only.</p>
+            </td>
+        </tr>
+        <!-- <tr>
+            <td style="width: 100%; height: 30px; background-color: blue;"></td>
+        </tr> -->
+    </table>
+    </center>
+    <div style="width: 100%; background-color: blue; height: 30px;"></div>
+    </div>
+    </center>
+</body>
+</html>

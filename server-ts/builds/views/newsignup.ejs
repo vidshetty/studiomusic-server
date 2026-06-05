@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Sign Up</title>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .table{
+            width: 50%;
+            /* height: 100px; */
+            background-color: #030303;
+            border-collapse: collapse;
+        }
+        .picture-row{
+            width: 100%;
+            height: 150px;
+            /* background-color: aliceblue; */
+        }
+        .picture-container{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .picture-img{
+            width: 100%;
+            height: auto;
+        }
+        .p,.p-small{
+            color: white;
+            font-size: 1.5em;
+            font-weight: 800;
+        }
+        .p-small{
+            color: #909090;
+        }
+        .p-container{
+            width: 100%;
+            height: auto;
+            padding-bottom: 50px;
+        }
+        
+        @media screen and (max-width: 500px) {
+            .table{
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <div style="width: 90%; background-color: #030303;">
+            <center>
+                <table class="table">
+                    <tr>
+                        <td class="picture-row">
+                            <center>
+                            <div class="picture-container">
+                                <!-- <img src="https://lh3.googleusercontent.com/a-/AOh14GgbViZE6c8CSlu5cFmJhP33_l7FNVLtwxespBZNrg=s96-c" -->
+                                <img src="<%=picture%>"
+                                alt="Profile Picture" class="picture-img"></img> 
+                            </div>
+                            </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-container">
+                            <center>
+                            <!-- <p class="p">Vidhata Shetty</p>
+                            <p class="p-small">toriumcar@gmail.com</p> -->
+                            <p class="p"><%=username%></p>
+                            <p class="p-small"><%=email%></p>
+                            </center>
+                        </td>
+                    </tr>
+                </table>
+            </center>
+            <div style="width: 100%; background-color: blue; height: 30px;"></div>
+        </div>
+    </center>
+</body>
+</html>

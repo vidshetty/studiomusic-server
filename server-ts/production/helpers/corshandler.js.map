@@ -1,0 +1,1 @@
+{"version":3,"file":"corshandler.js","sourceRoot":"","sources":["../../helpers/corshandler.ts"],"names":[],"mappings":";;AAGA,MAAM,WAAW,GAAG,CAAC,CAAU,EAAE,QAAkB,EAAE,IAAkB,EAAE,EAAE;IACvE,QAAQ,CAAC,SAAS,CAAC,6BAA6B,EAAE,GAAG,CAAC,CAAC;IACvD,QAAQ,CAAC,SAAS,CAAC,8BAA8B,EAAE,GAAG,CAAC,CAAC;IACxD,OAAO,IAAI,EAAE,CAAC;AAClB,CAAC,CAAC;AAGF,kBAAe,WAAW,CAAC"}
