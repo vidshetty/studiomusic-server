@@ -261,12 +261,10 @@ func uploadTrack(c *gin.Context) {
 
 	err = command.Run()
 	if err != nil {
-		err = errors.New("error in ffmpeg! -> " + err.Error())
-		return
-	}
-
-	if stderr.String() != "" {
-		err = errors.New("error while running ffmpeg! -> " + stderr.String())
+		err = errors.Join(
+			errors.New("error in ffmpeg! -> "+err.Error()),
+			errors.New("stderr -> "+stderr.String()),
+		)
 		return
 	}
 
