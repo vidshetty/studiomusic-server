@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	envhandler "server_go/services/env_handler"
+	"server_go/services/logger"
 	s3handler "server_go/services/s3_handler"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -45,6 +46,12 @@ func convertTitleForFolder(title string) string {
 
 func getLyrics(c *gin.Context) {
 
+	logger := logger.NewLogger("/getLyrics")
+
+	defer func() {
+		logger.Print()
+	}()
+
 	var err error = nil
 
 	defer func() {
@@ -58,7 +65,7 @@ func getLyrics(c *gin.Context) {
 
 	name := c.Query("name")
 
-	fmt.Println("name", name)
+	logger.Add(fmt.Sprintf("query name %s", name))
 
 	if name == "" {
 		err = errors.New("invalid name!")
@@ -92,6 +99,12 @@ func getLyrics(c *gin.Context) {
 
 func uploadLyrics(c *gin.Context) {
 
+	logger := logger.NewLogger("/uploadLyrics")
+
+	defer func() {
+		logger.Print()
+	}()
+
 	var err error = nil
 
 	defer func() {
@@ -104,12 +117,13 @@ func uploadLyrics(c *gin.Context) {
 	}()
 
 	filename := c.PostForm("filename")
+
+	logger.Add(fmt.Sprintf("filename %s", filename))
+
 	if filename == "" {
 		err = errors.New("filename is required!")
 		return
 	}
-
-	fmt.Println("filename", filename)
 
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -153,6 +167,12 @@ func uploadLyrics(c *gin.Context) {
 
 func uploadTrack(c *gin.Context) {
 
+	logger := logger.NewLogger("/uploadTrack")
+
+	defer func() {
+		logger.Print()
+	}()
+
 	var err error = nil
 
 	defer func() {
@@ -165,6 +185,9 @@ func uploadTrack(c *gin.Context) {
 	}()
 
 	trackTitle := c.PostForm("track_title")
+
+	logger.Add(fmt.Sprintf("track title %s", trackTitle))
+
 	if trackTitle == "" {
 		err = errors.New("track title is required!")
 		return
@@ -172,11 +195,15 @@ func uploadTrack(c *gin.Context) {
 
 	convertedTitle := convertTitleForFolder(trackTitle)
 
+	logger.Add(fmt.Sprintf("converted title %s", convertedTitle))
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		err = errors.New("no file found!")
 		return
 	}
+
+	logger.Add(fmt.Sprintf("uploaded file size %s", file.Size))
 
 	tempDir := "temp"
 
@@ -187,7 +214,6 @@ func uploadTrack(c *gin.Context) {
 	}
 
 	defer func() {
-		fmt.Println("tempDir", tempDir)
 		err = os.RemoveAll(tempDir)
 		if err != nil {
 			fmt.Println("error deleting temp folder", err.Error())
@@ -196,6 +222,8 @@ func uploadTrack(c *gin.Context) {
 
 	inputPath := fmt.Sprintf("%s/%s%s", tempDir, file.Filename, filepath.Ext(file.Filename))
 
+	logger.Add(fmt.Sprintf("input path %s", inputPath))
+
 	err = c.SaveUploadedFile(file, inputPath)
 	if err != nil {
 		err = errors.Join(errors.New("error in saving file in temp folder!"), err)
@@ -203,6 +231,8 @@ func uploadTrack(c *gin.Context) {
 	}
 
 	outputDir := fmt.Sprintf("%s/%s", tempDir, convertedTitle)
+
+	logger.Add(fmt.Sprintf("output dir %s", outputDir))
 
 	err = os.MkdirAll(outputDir, os.ModePerm)
 	if err != nil {
