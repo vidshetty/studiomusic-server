@@ -203,7 +203,7 @@ func uploadTrack(c *gin.Context) {
 		return
 	}
 
-	logger.Add(fmt.Sprintf("uploaded file size %s", file.Size))
+	logger.Add(fmt.Sprintf("uploaded file size %d", file.Size))
 
 	tempDir := "temp"
 
@@ -242,6 +242,8 @@ func uploadTrack(c *gin.Context) {
 
 	m3u8Path := fmt.Sprintf("%s/output.m3u8", outputDir)
 
+	logger.Add(fmt.Sprintf("m3u8 path %s", m3u8Path))
+
 	command := exec.Command("ffmpeg",
 		"-i", inputPath,
 		"-profile:v", "baseline",
@@ -268,6 +270,8 @@ func uploadTrack(c *gin.Context) {
 		err = errors.Join(errors.New("error reading from hls folder!"), err)
 		return
 	}
+
+	logger.Add(fmt.Sprintf("files in outputDir %d", len(files)))
 
 	for _, f := range files {
 
