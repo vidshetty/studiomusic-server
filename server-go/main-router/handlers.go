@@ -261,12 +261,14 @@ func uploadTrack(c *gin.Context) {
 
 	err = command.Run()
 	if err != nil {
+		logger.Add(fmt.Sprintf("error in ffmpeg -> %s", stderr.String()))
 		err = errors.New("error in ffmpeg! -> " + stderr.String())
 		return
 	}
 
 	files, err := os.ReadDir(outputDir)
 	if err != nil {
+		logger.Add(fmt.Sprintf("error reading from hls folder! -> %s", err.Error()))
 		err = errors.Join(errors.New("error reading from hls folder!"), err)
 		return
 	}
