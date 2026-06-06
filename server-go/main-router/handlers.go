@@ -331,11 +331,9 @@ func uploadTrack(c *gin.Context) {
 
 	command := exec.Command("ffmpeg",
 		"-i", inputPath,
-		"-profile:v", "baseline",
-		"-level", "3.0",
 		"-b:a", "192k",
 		"-start_number", "0",
-		"-hls_time", "10",
+		"-hls_time", "5",
 		"-hls_list_size", "0",
 		"-f", "hls",
 		m3u8Path,
