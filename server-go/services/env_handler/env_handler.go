@@ -28,6 +28,9 @@ type env struct {
 	AuthState                    string
 	StudioMusicTsServerTargetURL string
 	AdminAccess                  string
+	RedisUrl                     string
+	RedisPassword                string
+	RedisTTL                     string
 }
 
 func Init() {
@@ -61,5 +64,8 @@ func GetEnv() *env {
 		AuthState:                    os.Getenv("AUTH_STATE"),
 		StudioMusicTsServerTargetURL: os.Getenv("STUDIO_MUSIC_TS_SERVER_TARGET_URL"),
 		AdminAccess:                  os.Getenv("ADMIN_ACCESS"),
+		RedisUrl:                     os.Getenv("REDIS_URL"),
+		RedisPassword:                os.Getenv("REDIS_PASSWORD"),
+		RedisTTL:                     os.Getenv("REDIS_TTL"),
 	}
 }

@@ -7,6 +7,7 @@ import (
 	mainrouter "server_go/main-router"
 	"server_go/services/auth"
 	envhandler "server_go/services/env_handler"
+	"server_go/services/redis"
 	s3handler "server_go/services/s3_handler"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,11 @@ func main() {
 	s3handler.Init()
 	if err := auth.Init(); err != nil {
 		log.Fatalln("Failed to init auth", err)
+	}
+	redis.Init()
+
+	if envhandler.GetEnv().Environment == envhandler.Enviroment_Production {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	app := gin.Default()
