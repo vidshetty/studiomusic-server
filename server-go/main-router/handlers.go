@@ -205,9 +205,20 @@ func getLyrics(c *gin.Context) {
 		return
 	}
 
-	var data any
-	if err := json.Unmarshal(body, &data); err != nil {
+	type LyricsReturnData struct {
+		StartTimeMs int    `json:"startTimeMs"`
+		Words       string `json:"words"`
+		Key         int    `json:"key"`
+	}
+
+	var data []LyricsReturnData
+	if err = json.Unmarshal(body, &data); err != nil {
+		logger.Add("err in unmarshal -> " + err.Error())
 		return
+	}
+
+	for i := 0; i < len(data); i++ {
+		data[i].Key = i
 	}
 
 	c.JSON(http.StatusOK, data)
