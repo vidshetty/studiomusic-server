@@ -24,6 +24,18 @@ import (
 	go_redis "github.com/redis/go-redis/v9"
 )
 
+// types
+
+type LyricsData struct {
+	StartTimeMs string `json:"startTimeMs"`
+	Words       string `json:"words"`
+}
+
+type SpotifyLyrics struct {
+	StartTimeMs int    `json:"startTimeMs"`
+	Words       string `json:"words"`
+}
+
 // helpers
 
 func convertTitleForFolder(title string) string {
@@ -45,6 +57,22 @@ func convertTitleForFolder(title string) string {
 		}
 	}
 	return name
+}
+
+func convertNameForLyrics(name string) string {
+	symbols := map[rune]bool{
+		'"': true,
+		':': true,
+	}
+	newName := ""
+	for _, char := range name {
+		if _, exists := symbols[char]; exists {
+			newName += ""
+		} else {
+			newName += string(char)
+		}
+	}
+	return newName
 }
 
 func fetchFromRedis(ctx context.Context, s3Key string, logger *logger.Logger) ([]byte, error) {
@@ -157,9 +185,13 @@ func getLyrics(c *gin.Context) {
 		return
 	}
 
+	convertedName := convertNameForLyrics(name)
+
+	logger.Add(fmt.Sprintf("converted name -> %s", convertedName))
+
 	result, err := s3handler.GetS3Client().GetObject(c, &s3.GetObjectInput{
 		Bucket: aws.String(envhandler.GetEnv().AwsBucketName),
-		Key:    aws.String("lyrics/" + name + ".json"),
+		Key:    aws.String("lyrics/" + convertedName + ".json"),
 	})
 
 	if err != nil {
@@ -230,14 +262,40 @@ func uploadLyrics(c *gin.Context) {
 		return
 	}
 
-	reader := bytes.NewReader(body)
+	var data []LyricsData
+	if err = json.Unmarshal(body, &data); err != nil {
+		logger.Add("error in json unmarshall -> " + err.Error())
+		return
+	}
+
+	lyrics := make([]SpotifyLyrics, len(data))
+
+	for i, each := range data {
+		startMs, err := strconv.Atoi(each.StartTimeMs)
+		if err != nil {
+			logger.Add("error in parsing lyrics data -> " + err.Error())
+			return
+		}
+		lyrics[i] = SpotifyLyrics{
+			StartTimeMs: startMs,
+			Words:       each.Words,
+		}
+	}
+
+	finalLyrics, err := json.Marshal(lyrics)
+	if err != nil {
+		logger.Add("error in jaon marshal -> " + err.Error())
+		return
+	}
+
+	reader := bytes.NewReader(finalLyrics)
 
 	_, err = s3handler.GetS3Client().PutObject(c, &s3.PutObjectInput{
 		Bucket:        aws.String(envhandler.GetEnv().AwsBucketName),
 		Key:           aws.String("lyrics/" + filename),
 		Body:          reader,
 		ContentType:   aws.String("application/json"),
-		ContentLength: aws.Int64(int64(len(body))),
+		ContentLength: aws.Int64(int64(len(finalLyrics))),
 	})
 	if err != nil {
 		err = errors.Join(errors.New("error pushing to s3!"), err)

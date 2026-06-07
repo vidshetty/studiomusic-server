@@ -1,6 +1,8 @@
-import { Router, Response } from "express";
+import { Router, Request, Response } from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
 import { androidApiAccessCheck, androidApiAuthCheck } from "../auth-service/functions";
 import { responseMid } from "../helpers/responsehandler";
+import { ENV } from "../helpers/utils";
 import {
     getProfile,
     recordTime,
@@ -53,7 +55,13 @@ router.post("/addToRecentlyPlayed", responseMid(addToRecentlyPlayed));
 
 router.post("/removeFromRecentlyPlayed", responseMid(removeFromRecentlyPlayed));
 
-router.get("/getLyrics", responseMid(getLyrics));
+router.get("/getLyrics", createProxyMiddleware({
+    target: ENV().SERVER_GO_URL,
+    changeOrigin: true,
+    pathRewrite: (path: string, req: Request) => {
+        return "/lyrics?" + (String(req.originalUrl || "").split("?")?.[1] || "");
+    }
+}));
 
 router.get("/sign-out", responseMid(signOut));
 

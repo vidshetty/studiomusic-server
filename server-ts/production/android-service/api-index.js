@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const http_proxy_middleware_1 = require("http-proxy-middleware");
 const functions_1 = require("../auth-service/functions");
 const responsehandler_1 = require("../helpers/responsehandler");
+const utils_1 = require("../helpers/utils");
 const functions_2 = require("../api-service/functions");
 const api_functions_1 = require("./api-functions");
 const router = (0, express_1.Router)();
@@ -19,7 +21,14 @@ router.get("/getAlbumDetails", (0, responsehandler_1.responseMid)(api_functions_
 router.get("/search", (0, responsehandler_1.responseMid)(api_functions_1.search));
 router.post("/addToRecentlyPlayed", (0, responsehandler_1.responseMid)(functions_2.addToRecentlyPlayed));
 router.post("/removeFromRecentlyPlayed", (0, responsehandler_1.responseMid)(functions_2.removeFromRecentlyPlayed));
-router.get("/getLyrics", (0, responsehandler_1.responseMid)(functions_2.getLyrics));
+router.get("/getLyrics", (0, http_proxy_middleware_1.createProxyMiddleware)({
+    target: (0, utils_1.ENV)().SERVER_GO_URL,
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+        var _a;
+        return "/lyrics?" + (((_a = String(req.originalUrl || "").split("?")) === null || _a === void 0 ? void 0 : _a[1]) || "");
+    }
+}));
 router.get("/sign-out", (0, responsehandler_1.responseMid)(functions_2.signOut));
 router.get("/startradio", (0, responsehandler_1.responseMid)(api_functions_1.startRadio));
 router.get("/mostPlayedRadio", (0, responsehandler_1.responseMid)(api_functions_1.getMostPlayedRadio));
