@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	mainrouter "server_go/main-router"
+	mainrouter "server_go/routers/main-router"
 	"server_go/services/auth"
 	envhandler "server_go/services/env_handler"
 	"server_go/services/redis"

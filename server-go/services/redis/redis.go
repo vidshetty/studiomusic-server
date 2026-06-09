@@ -11,6 +11,7 @@ import (
 var (
 	redisClient     *redis.Client = nil
 	clientAvailable bool          = false
+	Nil             error         = redis.Nil
 )
 
 func Init() {

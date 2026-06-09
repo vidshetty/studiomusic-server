@@ -399,7 +399,7 @@ if (trackMetaForm) {
 
     const trackId = document.getElementById("track-meta-track-id")?.value.trim() || "";
     if (!/^[a-fA-F0-9]{24}$/.test(trackId)) {
-      showStatus(trackMetaStatus, "error", "Generate a _trackId before saving.");
+      showStatus(trackMetaStatus, "error", "Enter or generate a _trackId before saving.");
       return;
     }
 
