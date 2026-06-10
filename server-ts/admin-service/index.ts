@@ -13,7 +13,15 @@ import {
     createAlbum,
     createTrack,
     generateAlbumId,
-    generateTrackId
+    generateTrackId,
+    searchContent,
+    getAlbumById,
+    getTrackById,
+    updateAlbum,
+    updateTrack,
+    searchUsers,
+    getUserById,
+    updateUser
 } from "./functions";
 
 const router = Router();
@@ -45,9 +53,25 @@ router.get("/album", responseMid(getAlbum));
 
 router.get("/albums", responseMid(listAlbums));
 
+router.get("/search", responseMid(searchContent));
+
+router.get("/album/details", responseMid(getAlbumById));
+
+router.get("/track/details", responseMid(getTrackById));
+
+router.get("/users/search", responseMid(searchUsers));
+
+router.get("/user/details", responseMid(getUserById));
+
+router.put("/user", responseMid(updateUser));
+
 router.post("/album", responseMid(createAlbum));
 
+router.put("/album", responseMid(updateAlbum));
+
 router.post("/track", responseMid(createTrack));
+
+router.put("/track", responseMid(updateTrack));
 
 router.get("/object-id/album", responseMid(generateAlbumId));
 

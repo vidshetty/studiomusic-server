@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="theme-color" content="#000000" />
   <meta name="color-scheme" content="dark" />
-  <title>Upload Dashboard</title>
+  <title>Studio Dashboard</title>
   <link rel="icon" href="/dashboard/favicon.ico" sizes="any" />
   <link rel="icon" href="/dashboard/latest-blueblack-black.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,11 +36,25 @@
 
   <main class="page-content">
     <div class="page-header">
-      <h2 class="page-title">Upload content</h2>
-      <p class="page-desc">
+      <h2 class="page-title" id="page-title">Upload content</h2>
+      <p class="page-desc" id="page-desc">
         Fill in album and track metadata, then upload audio and lyrics files.
       </p>
     </div>
+
+    <nav class="tab-bar" role="tablist" aria-label="Dashboard sections">
+      <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="upload" id="tab-btn-upload">
+        Upload
+      </button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="edit" id="tab-btn-edit">
+        Edit
+      </button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="users" id="tab-btn-users">
+        Users
+      </button>
+    </nav>
+
+    <div id="tab-upload" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-upload">
 
     <section class="section">
 
@@ -370,11 +384,312 @@
         </ul>
       </div>
     </aside>
+
+    </div>
+
+    <div id="tab-edit" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-edit">
+      <section class="section">
+        <article class="card card--wide">
+          <div class="card-header">
+            <div class="card-icon-wrap lyrics">
+              <span class="material-symbols-outlined">search</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Search</h3>
+              <p class="card-desc">Find albums and tracks by name, artist, or title</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="text-field">
+              <label class="text-field-label" for="edit-search">Search</label>
+              <input
+                class="text-field-input"
+                type="search"
+                id="edit-search"
+                placeholder="Album, artist, or track title…"
+                autocomplete="off"
+              />
+              <span class="text-field-support">Results update as you type. Select an item to edit.</span>
+            </div>
+            <div class="edit-search-grid hidden" id="edit-search-results">
+              <div class="edit-search-col">
+                <h4 class="edit-search-heading">Albums</h4>
+                <ul class="edit-result-list" id="edit-album-results" role="listbox"></ul>
+              </div>
+              <div class="edit-search-col">
+                <h4 class="edit-search-heading">Tracks</h4>
+                <ul class="edit-result-list" id="edit-track-results" role="listbox"></ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section hidden" id="edit-album-section">
+        <article class="card card--wide">
+          <div class="card-header">
+            <div class="card-icon-wrap lyrics">
+              <span class="material-symbols-outlined filled">album</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Edit album</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="edit-album-form" class="form" novalidate>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-album-id">_albumId</label>
+                <input class="text-field-input text-field-input--mono" type="text" id="edit-album-id" readonly />
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-name">Album</label>
+                  <input class="text-field-input" type="text" id="edit-album-name" required />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-artist">Album artist</label>
+                  <input class="text-field-input" type="text" id="edit-album-artist" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-year">Year</label>
+                  <input class="text-field-input" type="text" id="edit-album-year" required />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-type">Type</label>
+                  <select class="text-field-input" id="edit-album-type" required>
+                    <option value="Album">Album</option>
+                    <option value="Single">Single</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-color">Color</label>
+                  <input class="text-field-input" type="text" id="edit-album-color" required />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-release">Release date</label>
+                  <input class="text-field-input" type="date" id="edit-album-release" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-light">Light color <span class="optional">(optional)</span></label>
+                  <input class="text-field-input" type="text" id="edit-album-light" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-dark">Dark color <span class="optional">(optional)</span></label>
+                  <input class="text-field-input" type="text" id="edit-album-dark" />
+                </div>
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-album-thumbnail">Thumbnail URL</label>
+                <input class="text-field-input" type="url" id="edit-album-thumbnail" required />
+              </div>
+              <div class="form-actions form-actions--split">
+                <button type="button" class="btn btn-text" id="edit-album-cancel">Cancel</button>
+                <button type="submit" class="btn btn-filled" id="edit-album-submit">
+                  <span class="btn-label">Save changes</span>
+                  <span class="spinner hidden" id="edit-album-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="banner hidden status" id="edit-album-status" role="status">
+              <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+              <span class="banner-text status-text"></span>
+            </div>
+            <pre class="json-preview hidden" id="edit-album-preview" aria-label="Album JSON preview"></pre>
+          </div>
+        </article>
+      </section>
+
+      <section class="section hidden" id="edit-track-section">
+        <article class="card card--wide">
+          <div class="card-header">
+            <div class="card-icon-wrap track">
+              <span class="material-symbols-outlined filled">library_music</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Edit track</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="edit-track-form" class="form" novalidate>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-album-id">_albumId</label>
+                  <input class="text-field-input text-field-input--mono" type="text" id="edit-track-album-id" required pattern="[a-fA-F0-9]{24}" />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-id">_trackId</label>
+                  <input class="text-field-input text-field-input--mono" type="text" id="edit-track-id" readonly />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-title">Title</label>
+                  <input class="text-field-input" type="text" id="edit-track-title" required />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-artist">Artist</label>
+                  <input class="text-field-input" type="text" id="edit-track-artist" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-url">URL</label>
+                  <input class="text-field-input text-field-input--mono" type="text" id="edit-track-url" required />
+                </div>
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-track-duration">Duration</label>
+                  <input class="text-field-input" type="text" id="edit-track-duration" required />
+                </div>
+              </div>
+              <div class="form-row form-row--checks">
+                <label class="check-field">
+                  <input type="checkbox" id="edit-track-lyrics" />
+                  <span>lyrics</span>
+                </label>
+                <label class="check-field">
+                  <input type="checkbox" id="edit-track-sync" />
+                  <span>sync</span>
+                </label>
+                <div class="text-field text-field--inline">
+                  <label class="text-field-label" for="edit-track-stream">streamCount</label>
+                  <input class="text-field-input" type="number" id="edit-track-stream" min="0" value="0" />
+                </div>
+              </div>
+              <div class="form-actions form-actions--split">
+                <button type="button" class="btn btn-text" id="edit-track-cancel">Cancel</button>
+                <button type="submit" class="btn btn-filled" id="edit-track-submit">
+                  <span class="btn-label">Save changes</span>
+                  <span class="spinner hidden" id="edit-track-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="banner hidden status" id="edit-track-status" role="status">
+              <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+              <span class="banner-text status-text"></span>
+            </div>
+            <pre class="json-preview hidden" id="edit-track-preview" aria-label="Track JSON preview"></pre>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <div id="tab-users" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-users">
+      <section class="section">
+        <article class="card card--wide">
+          <div class="card-header">
+            <div class="card-icon-wrap lyrics">
+              <span class="material-symbols-outlined">person_search</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Search users</h3>
+              <p class="card-desc">Find users by email, username, or display name</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="text-field">
+              <label class="text-field-label" for="user-search">Search</label>
+              <input
+                class="text-field-input"
+                type="search"
+                id="user-search"
+                placeholder="Email or username…"
+                autocomplete="off"
+              />
+              <span class="text-field-support">Results update as you type. Select a user to edit.</span>
+            </div>
+            <ul class="edit-result-list hidden" id="user-search-results" role="listbox"></ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="section hidden" id="edit-user-section">
+        <article class="card card--wide">
+          <div class="card-header">
+            <div class="card-icon-wrap track">
+              <span class="material-symbols-outlined filled">manage_accounts</span>
+            </div>
+            <div class="card-heading">
+              <h3 class="card-title">Edit user</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="edit-user-form" class="form" novalidate>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-user-id">_id</label>
+                <input class="text-field-input text-field-input--mono" type="text" id="edit-user-id" readonly />
+              </div>
+              <div class="user-readonly-meta" id="edit-user-meta"></div>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-user-access-duration">accountAccess.duration (seconds)</label>
+                <input class="text-field-input" type="number" id="edit-user-access-duration" min="0" required />
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-user-access-timelimit">accountAccess.timeLimit</label>
+                <input
+                  class="text-field-input text-field-input--mono"
+                  type="text"
+                  id="edit-user-access-timelimit"
+                  readonly
+                  placeholder="Not set"
+                />
+                <span class="text-field-support">View only · Asia/Kolkata (IST)</span>
+              </div>
+              <div class="text-field">
+                <label class="text-field-label" for="edit-user-recently-played">recentlyPlayed</label>
+                <textarea
+                  class="text-field-input text-field-input--mono json-textarea"
+                  id="edit-user-recently-played"
+                  rows="8"
+                  spellcheck="false"
+                  required
+                ></textarea>
+                <span class="text-field-support">JSON array: <code>{ albumId, frequency, last }</code></span>
+              </div>
+              <div class="text-field">
+                <label class="text-field-label">activeSessions</label>
+                <p class="session-list-empty hidden" id="edit-user-active-sessions-empty">No active sessions.</p>
+                <ul class="session-list" id="edit-user-active-sessions-list"></ul>
+                <span class="text-field-support">Edit <code>seen</code> or remove sessions. Other fields are view only.</span>
+              </div>
+              <div class="form-actions form-actions--split">
+                <button type="button" class="btn btn-text" id="edit-user-cancel">Cancel</button>
+                <button type="submit" class="btn btn-filled" id="edit-user-submit">
+                  <span class="btn-label">Save changes</span>
+                  <span class="spinner hidden" id="edit-user-spinner" aria-hidden="true"></span>
+                </button>
+              </div>
+            </form>
+            <div class="banner hidden status" id="edit-user-status" role="status">
+              <span class="material-symbols-outlined status-icon" aria-hidden="true">info</span>
+              <span class="banner-text status-text"></span>
+            </div>
+            <pre class="json-preview hidden" id="edit-user-preview" aria-label="User JSON preview"></pre>
+          </div>
+        </article>
+      </section>
+    </div>
   </main>
 
   <footer class="footer">
     <p>Signed in with Google</p>
   </footer>
+
+  <div class="auth-popup-overlay hidden" id="auth-popup-overlay" role="alertdialog" aria-modal="true" aria-labelledby="auth-popup-title">
+    <div class="auth-popup">
+      <div class="auth-popup-icon" aria-hidden="true">
+        <span class="material-symbols-outlined">lock</span>
+      </div>
+      <h3 class="auth-popup-title" id="auth-popup-title">Session expired</h3>
+      <p class="auth-popup-text" id="auth-popup-text">Please sign in again.</p>
+      <p class="auth-popup-meta">Redirecting to sign in…</p>
+    </div>
+  </div>
 
   <script src="/dashboard/index.js" defer></script>
 </body>

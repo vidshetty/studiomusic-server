@@ -9,8 +9,16 @@ import (
 func Register(dashboardApiRouter *gin.RouterGroup) {
 
 	dashboardApiRouter.GET("/albums", reverseproxy.ProxyToStudioTs("/admin/albums"))
+	dashboardApiRouter.GET("/search", reverseproxy.ProxyToStudioTs("/admin/search"))
+	dashboardApiRouter.GET("/album/details", reverseproxy.ProxyToStudioTs("/admin/album/details"))
+	dashboardApiRouter.GET("/track/details", reverseproxy.ProxyToStudioTs("/admin/track/details"))
+	dashboardApiRouter.GET("/users/search", reverseproxy.ProxyToStudioTs("/admin/users/search"))
+	dashboardApiRouter.GET("/user/details", reverseproxy.ProxyToStudioTs("/admin/user/details"))
+	dashboardApiRouter.PUT("/user", reverseproxy.ProxyToStudioTs("/admin/user"))
 	dashboardApiRouter.POST("/album", reverseproxy.ProxyToStudioTs("/admin/album"))
+	dashboardApiRouter.PUT("/album", reverseproxy.ProxyToStudioTs("/admin/album"))
 	dashboardApiRouter.POST("/track", reverseproxy.ProxyToStudioTs("/admin/track"))
+	dashboardApiRouter.PUT("/track", reverseproxy.ProxyToStudioTs("/admin/track"))
 	dashboardApiRouter.GET("/object-id/albumId", reverseproxy.ProxyToStudioTs("/admin/object-id/album"))
 	dashboardApiRouter.GET("/object-id/trackId", reverseproxy.ProxyToStudioTs("/admin/object-id/track"))
 

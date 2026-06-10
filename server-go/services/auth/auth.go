@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	envhandler "server_go/services/env_handler"
 	"sync"
 	"time"
@@ -199,16 +200,36 @@ func HandleGoogleCallback(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/dashboard")
 }
 
+func wantsJSONResponse(c *gin.Context) bool {
+	if c.GetHeader("X-Dashboard-Request") != "" {
+		return true
+	}
+	return strings.Contains(c.GetHeader("Accept"), "application/json")
+}
+
+func abortUnauthorized(c *gin.Context) {
+	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+}
+
+func respondUnauthorized(c *gin.Context) {
+	if wantsJSONResponse(c) {
+		abortUnauthorized(c)
+		return
+	}
+	c.Redirect(http.StatusFound, "/dashboard/login")
+	c.Abort()
+}
+
 // ValidateJWT reads the JWT from cookie (or Authorization header), verifies it, and checks file store.
 func ValidateJWT(c *gin.Context) {
 	tokenString := extractToken(c)
 	if tokenString == "" {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		abortUnauthorized(c)
 		return
 	}
 	claims, ok := parseAndValidateToken(tokenString)
 	if !ok {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		abortUnauthorized(c)
 		return
 	}
 	c.Set("email", claims.Email)
@@ -219,14 +240,12 @@ func ValidateJWT(c *gin.Context) {
 func ValidateJWTOrRedirectToLogin(c *gin.Context) {
 	tokenString := extractToken(c)
 	if tokenString == "" {
-		c.Redirect(http.StatusFound, "/dashboard/login")
-		c.Abort()
+		respondUnauthorized(c)
 		return
 	}
 	claims, ok := parseAndValidateToken(tokenString)
 	if !ok {
-		c.Redirect(http.StatusFound, "/dashboard/login")
-		c.Abort()
+		respondUnauthorized(c)
 		return
 	}
 	c.Set("email", claims.Email)
