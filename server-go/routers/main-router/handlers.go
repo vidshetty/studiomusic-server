@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	envhandler "server_go/services/env_handler"
 	"server_go/services/logger"
 	"server_go/services/redis"
 	s3handler "server_go/services/s3_handler"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -173,7 +175,15 @@ func getLyrics(c *gin.Context) {
 		})
 	}()
 
-	name := c.Query("name")
+	logger.Add("url -> " + c.Request.URL.RawQuery)
+
+	name := strings.Split(c.Request.URL.RawQuery, "name=")[1]
+
+	name, err = url.QueryUnescape(name)
+	if err != nil {
+		logger.Add("error in unescape -> " + err.Error())
+		return
+	}
 
 	logger.Add(fmt.Sprintf("query name %s", name))
 
