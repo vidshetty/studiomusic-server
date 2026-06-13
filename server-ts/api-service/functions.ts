@@ -35,7 +35,8 @@ import { AlbumSchema, ResumeConfigSchema, TracksSchema, UserSchema } from "../he
 
 
 const compareRecents = (a: RecentlyPlayed, b: RecentlyPlayed) => {
-    if (a.last < b.last) return 1;
+    // if (a.last < b.last) return 1;
+    if (a.frequency < b.frequency) return 1;
     return -1;
 };
 
