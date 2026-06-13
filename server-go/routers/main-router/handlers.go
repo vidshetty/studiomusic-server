@@ -283,21 +283,26 @@ func hlsListen(c *gin.Context) {
 		_ = storeInRedis(c, s3Key, data, logger)
 	}
 
-	c.Header(
-		"Content-Type",
-		func() string {
-			if filepath.Ext(fileName) == ".m3u8" {
-				return "application/x-mpegURL"
-			}
-			return "video/MP2T"
-		}(),
-	)
+	contentType := func() string {
+		if filepath.Ext(fileName) == ".m3u8" {
+			return "application/x-mpegURL"
+		}
+		return "video/MP2T"
+	}()
 
-	reader := bytes.NewReader(data)
+	if envhandler.GetEnv().HlsListenReturn == "0" {
+		c.Data(http.StatusOK, contentType, data)
+	} else {
 
-	if _, err = io.Copy(c.Writer, reader); err != nil {
-		logger.Add("error in io.Copy -> " + err.Error())
-		return
+		c.Header("Content-Type", contentType)
+
+		reader := bytes.NewReader(data)
+
+		if _, err = io.Copy(c.Writer, reader); err != nil {
+			logger.Add("error in io.Copy -> " + err.Error())
+			return
+		}
+
 	}
 
 }

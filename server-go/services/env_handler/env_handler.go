@@ -31,6 +31,7 @@ type env struct {
 	RedisUrl                     string
 	RedisPassword                string
 	RedisTTL                     string
+	HlsListenReturn              string
 }
 
 func Init() {
@@ -67,5 +68,6 @@ func GetEnv() *env {
 		RedisUrl:                     os.Getenv("REDIS_URL"),
 		RedisPassword:                os.Getenv("REDIS_PASSWORD"),
 		RedisTTL:                     os.Getenv("REDIS_TTL"),
+		HlsListenReturn:              os.Getenv("HLS_LISTEN_RETURN"),
 	}
 }
