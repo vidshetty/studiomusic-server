@@ -14,6 +14,11 @@ const latestUpdate_1 = require("../data/latestUpdate");
 const mongodb_connection_1 = require("../helpers/mongodb-connection");
 const compareRecents = (a, b) => {
     // if (a.last < b.last) return 1;
+    if (a.frequency === b.frequency) {
+        if (a.last.getTime() < b.last.getTime())
+            return 1;
+        return -1;
+    }
     if (a.frequency < b.frequency)
         return 1;
     return -1;
