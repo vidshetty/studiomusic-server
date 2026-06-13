@@ -291,7 +291,7 @@ func hlsListen(c *gin.Context) {
 	}()
 
 	if envhandler.GetEnv().HlsListenReturn == "0" {
-		c.Data(http.StatusOK, contentType, data)
+		c.Data(http.StatusOK, "", data)
 	} else {
 
 		c.Header("Content-Type", contentType)
