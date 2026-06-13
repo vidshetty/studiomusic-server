@@ -17,7 +17,14 @@ const getMostPlayed = async (userId) => {
     });
     const { recentlyPlayed: recents } = user;
     const sorted_recents = recents.sort((a, b) => {
-        if (a.last < b.last)
+        // if (a.last < b.last) return 1;
+        // return -1;
+        if (a.frequency === b.frequency) {
+            if (a.last.getTime() < b.last.getTime())
+                return 1;
+            return -1;
+        }
+        if (a.frequency < b.frequency)
             return 1;
         return -1;
     });
