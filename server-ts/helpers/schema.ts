@@ -18,6 +18,7 @@ export interface AlbumSchema {
     LightColor?: string;
     DarkColor?: string;
     releaseDate: string;
+    addedDate?: string;
     Thumbnail: string;
     Type: "Album" | "Single";
 };

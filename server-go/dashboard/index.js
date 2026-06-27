@@ -39,6 +39,21 @@ const TAB_COPY = {
 const fetchOpts = { credentials: "include" };
 const LOGIN_URL = "/dashboard/login";
 
+function todayDateString() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function setAlbumAddedDateDefault() {
+  const input = document.getElementById("album-added-date");
+  if (input) input.value = todayDateString();
+}
+
+setAlbumAddedDateDefault();
+
 let unauthorizedHandled = false;
 
 class AuthError extends Error {
@@ -458,6 +473,7 @@ const trackMetaAlbumIdOverride = document.getElementById("track-meta-album-id");
 if (albumMetaForm) {
   document.getElementById("album-meta-reset")?.addEventListener("click", () => {
     albumMetaForm.reset();
+    setAlbumAddedDateDefault();
     hideStatus(albumMetaStatus);
     hideJsonPreview(albumMetaPreview);
   });
@@ -470,6 +486,12 @@ if (albumMetaForm) {
     const releaseDate = releaseInput?.value || "";
     if (!releaseDate) {
       showStatus(albumMetaStatus, "error", "Release date is required.");
+      return;
+    }
+
+    const addedDate = document.getElementById("album-added-date")?.value || "";
+    if (!addedDate) {
+      showStatus(albumMetaStatus, "error", "Added date is required.");
       return;
     }
 
@@ -486,6 +508,7 @@ if (albumMetaForm) {
       Year: document.getElementById("album-year").value.trim(),
       Color: document.getElementById("album-color").value.trim(),
       releaseDate,
+      addedDate,
       Thumbnail: document.getElementById("album-thumbnail").value.trim(),
       Type: document.getElementById("album-type").value,
     };
@@ -922,6 +945,8 @@ async function loadAlbumForEdit(albumId) {
     document.getElementById("edit-album-type").value = album.Type || "Album";
     document.getElementById("edit-album-color").value = album.Color || "";
     document.getElementById("edit-album-release").value = (album.releaseDate || "").slice(0, 10);
+    document.getElementById("edit-album-added-date").value =
+      (album.addedDate || "").slice(0, 10) || todayDateString();
     document.getElementById("edit-album-light").value = album.LightColor || "";
     document.getElementById("edit-album-dark").value = album.DarkColor || "";
     document.getElementById("edit-album-thumbnail").value = album.Thumbnail || "";
@@ -993,6 +1018,12 @@ if (editAlbumForm) {
       return;
     }
 
+    const addedDate = document.getElementById("edit-album-added-date")?.value || "";
+    if (!addedDate) {
+      showStatus(editAlbumStatus, "error", "Added date is required.");
+      return;
+    }
+
     const albumId = document.getElementById("edit-album-id")?.value.trim() || "";
     if (!/^[a-fA-F0-9]{24}$/.test(albumId)) {
       showStatus(editAlbumStatus, "error", "Invalid _albumId.");
@@ -1006,6 +1037,7 @@ if (editAlbumForm) {
       Year: document.getElementById("edit-album-year").value.trim(),
       Color: document.getElementById("edit-album-color").value.trim(),
       releaseDate,
+      addedDate,
       Thumbnail: document.getElementById("edit-album-thumbnail").value.trim(),
       Type: document.getElementById("edit-album-type").value,
     };

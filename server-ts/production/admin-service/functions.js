@@ -273,7 +273,14 @@ const listAlbums = async (request) => {
 exports.listAlbums = listAlbums;
 const createAlbum = async (request) => {
     const body = request.body;
-    if (!body.Album || !body.AlbumArtist || !body.Year || !body.Color || !body.releaseDate || !body.Thumbnail || !body.Type) {
+    if (!body.Album ||
+        !body.AlbumArtist ||
+        !body.Year ||
+        !body.Color ||
+        !body.releaseDate ||
+        !body.addedDate ||
+        !body.Thumbnail ||
+        !body.Type) {
         throw new Error("Missing required album fields.");
     }
     if (body.Type !== "Album" && body.Type !== "Single") {
@@ -283,7 +290,7 @@ const createAlbum = async (request) => {
         throw new Error("Valid _albumId is required.");
     }
     const { Albums } = mongodb_connection_1.MongoStudioHandler.getCollectionSet();
-    const new_album = Object.assign({ _id: new mongodb_1.ObjectId(), _albumId: new mongodb_1.ObjectId(body._albumId), Album: body.Album, AlbumArtist: body.AlbumArtist, Year: body.Year, Color: body.Color, releaseDate: (0, moment_timezone_1.default)(body.releaseDate).format("YYYY-MM-DD"), Thumbnail: body.Thumbnail, Type: body.Type }, (() => {
+    const new_album = Object.assign({ _id: new mongodb_1.ObjectId(), _albumId: new mongodb_1.ObjectId(body._albumId), Album: body.Album, AlbumArtist: body.AlbumArtist, Year: body.Year, Color: body.Color, releaseDate: (0, moment_timezone_1.default)(body.releaseDate).format("YYYY-MM-DD"), addedDate: (0, moment_timezone_1.default)(body.addedDate).format("YYYY-MM-DD"), Thumbnail: body.Thumbnail, Type: body.Type }, (() => {
         const obj = {};
         if (body.LightColor)
             obj.LightColor = body.LightColor;
@@ -424,7 +431,14 @@ const updateAlbum = async (request) => {
     if (!body._albumId || !mongodb_1.ObjectId.isValid(body._albumId)) {
         throw new Error("Valid _albumId is required.");
     }
-    if (!body.Album || !body.AlbumArtist || !body.Year || !body.Color || !body.releaseDate || !body.Thumbnail || !body.Type) {
+    if (!body.Album ||
+        !body.AlbumArtist ||
+        !body.Year ||
+        !body.Color ||
+        !body.releaseDate ||
+        !body.addedDate ||
+        !body.Thumbnail ||
+        !body.Type) {
         throw new Error("Missing required album fields.");
     }
     if (body.Type !== "Album" && body.Type !== "Single") {
@@ -443,6 +457,7 @@ const updateAlbum = async (request) => {
         Year: body.Year,
         Color: body.Color,
         releaseDate: (0, moment_timezone_1.default)(body.releaseDate).format("YYYY-MM-DD"),
+        addedDate: (0, moment_timezone_1.default)(body.addedDate).format("YYYY-MM-DD"),
         Thumbnail: body.Thumbnail,
         Type: body.Type
     };

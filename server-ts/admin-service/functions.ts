@@ -450,7 +450,16 @@ export const createAlbum = async (request: Request) => {
 
     const body = request.body as Partial<AlbumSchema> & { _albumId?: string };
 
-    if (!body.Album || !body.AlbumArtist || !body.Year || !body.Color || !body.releaseDate || !body.Thumbnail || !body.Type) {
+    if (
+        !body.Album ||
+        !body.AlbumArtist ||
+        !body.Year ||
+        !body.Color ||
+        !body.releaseDate ||
+        !body.addedDate ||
+        !body.Thumbnail ||
+        !body.Type
+    ) {
         throw new Error("Missing required album fields.");
     }
 
@@ -472,6 +481,7 @@ export const createAlbum = async (request: Request) => {
         Year: body.Year,
         Color: body.Color,
         releaseDate: moment(body.releaseDate).format("YYYY-MM-DD"),
+        addedDate: moment(body.addedDate).format("YYYY-MM-DD"),
         Thumbnail: body.Thumbnail,
         Type: body.Type,
         ...(() => {
@@ -671,7 +681,16 @@ export const updateAlbum = async (request: Request) => {
         throw new Error("Valid _albumId is required.");
     }
 
-    if (!body.Album || !body.AlbumArtist || !body.Year || !body.Color || !body.releaseDate || !body.Thumbnail || !body.Type) {
+    if (
+        !body.Album ||
+        !body.AlbumArtist ||
+        !body.Year ||
+        !body.Color ||
+        !body.releaseDate ||
+        !body.addedDate ||
+        !body.Thumbnail ||
+        !body.Type
+    ) {
         throw new Error("Missing required album fields.");
     }
 
@@ -695,6 +714,7 @@ export const updateAlbum = async (request: Request) => {
         Year: body.Year,
         Color: body.Color,
         releaseDate: moment(body.releaseDate).format("YYYY-MM-DD"),
+        addedDate: moment(body.addedDate).format("YYYY-MM-DD"),
         Thumbnail: body.Thumbnail,
         Type: body.Type
     };
