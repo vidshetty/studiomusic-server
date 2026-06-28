@@ -235,6 +235,53 @@ code {
   display: block;
 }
 
+.lyrics-mode-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  background: var(--black);
+}
+
+.lyrics-mode-tab {
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--on-surface-variant);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.lyrics-mode-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--on-surface);
+}
+
+.lyrics-mode-tab.active {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.lyrics-mode-panel {
+  display: none;
+}
+
+.lyrics-mode-panel.active {
+  display: block;
+}
+
+.lyrics-editor-actions {
+  margin-top: -8px;
+}
+
 /* ── Edit search results ── */
 .edit-search-grid {
   display: grid;
@@ -637,8 +684,21 @@ code {
   align-items: end;
 }
 
+.form-row--thumbnail-date {
+  grid-template-columns: minmax(0, 1fr) 168px;
+  align-items: end;
+}
+
+.text-field--added-date {
+  min-width: 0;
+}
+
 @media (max-width: 600px) {
   .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row--thumbnail-date {
     grid-template-columns: 1fr;
   }
 }
@@ -652,7 +712,7 @@ select.text-field-input {
 }
 
 .check-field {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   min-height: 48px;
@@ -660,6 +720,8 @@ select.text-field-input {
   cursor: pointer;
   color: var(--on-surface);
   font-size: 14px;
+  width: fit-content;
+  justify-self: start;
 }
 
 .check-field input {

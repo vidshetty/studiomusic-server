@@ -113,7 +113,7 @@
               <div class="form-row">
                 <div class="text-field">
                   <label class="text-field-label" for="album-color">Color</label>
-                  <input class="text-field-input" type="text" id="album-color" name="Color" required placeholder="#066BFF" />
+                  <input class="text-field-input" type="text" id="album-color" name="Color" required placeholder="rgba(6,107,255,1)" />
                 </div>
                 <div class="text-field">
                   <label class="text-field-label" for="album-release">Release date</label>
@@ -122,23 +122,23 @@
               </div>
               <div class="form-row">
                 <div class="text-field">
-                  <label class="text-field-label" for="album-added-date">Added date</label>
-                  <input class="text-field-input" type="date" id="album-added-date" name="addedDate" required />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="text-field">
                   <label class="text-field-label" for="album-light">Light color <span class="optional">(optional)</span></label>
-                  <input class="text-field-input" type="text" id="album-light" name="LightColor" placeholder="#aecbfa" />
+                  <input class="text-field-input" type="text" id="album-light" name="LightColor" placeholder="rgba(174,203,250,1)" />
                 </div>
                 <div class="text-field">
                   <label class="text-field-label" for="album-dark">Dark color <span class="optional">(optional)</span></label>
-                  <input class="text-field-input" type="text" id="album-dark" name="DarkColor" placeholder="#174ea6" />
+                  <input class="text-field-input" type="text" id="album-dark" name="DarkColor" placeholder="rgba(23,78,166,1)" />
                 </div>
               </div>
-              <div class="text-field">
-                <label class="text-field-label" for="album-thumbnail">Thumbnail URL</label>
-                <input class="text-field-input" type="url" id="album-thumbnail" name="Thumbnail" required placeholder="https://…" />
+              <div class="form-row form-row--thumbnail-date">
+                <div class="text-field">
+                  <label class="text-field-label" for="album-thumbnail">Thumbnail URL</label>
+                  <input class="text-field-input" type="url" id="album-thumbnail" name="Thumbnail" required placeholder="https://…" />
+                </div>
+                <div class="text-field text-field--added-date">
+                  <label class="text-field-label" for="album-added-date">Added date</label>
+                  <input class="text-field-input" type="date" id="album-added-date" name="addedDate" required />
+                </div>
               </div>
               <div class="form-actions form-actions--split">
                 <button type="button" class="btn btn-text" id="album-meta-reset">Reset</button>
@@ -327,7 +327,7 @@
           </div>
           <div class="card-heading">
             <h3 class="card-title">Upload lyrics</h3>
-            <p class="card-desc">JSON file · stored in S3 lyrics bucket</p>
+            <p class="card-desc">Paste JSON or upload a file · stored in S3 lyrics bucket</p>
           </div>
         </div>
 
@@ -347,6 +347,33 @@
               <span class="text-field-support">Stored as <code>lyrics/&lt;filename&gt;</code>. Include the <code>.json</code> extension.</span>
             </div>
 
+            <div class="lyrics-mode-bar" role="tablist" aria-label="Lyrics input method">
+              <button type="button" class="lyrics-mode-tab active" role="tab" aria-selected="true" data-lyrics-mode="editor" id="lyrics-mode-btn-editor">
+                JSON editor
+              </button>
+              <button type="button" class="lyrics-mode-tab" role="tab" aria-selected="false" data-lyrics-mode="file" id="lyrics-mode-btn-file">
+                File upload
+              </button>
+            </div>
+
+            <div id="lyrics-mode-editor" class="lyrics-mode-panel active" role="tabpanel" aria-labelledby="lyrics-mode-btn-editor">
+              <div class="text-field">
+                <label class="text-field-label" for="lyrics-json-editor">Lyrics JSON</label>
+                <textarea
+                  class="text-field-input text-field-input--mono json-textarea"
+                  id="lyrics-json-editor"
+                  rows="12"
+                  spellcheck="false"
+                  placeholder='[{"startTimeMs":"0","words":"Line one"}]'
+                ></textarea>
+                <span class="text-field-support">Array of <code>{ startTimeMs, words }</code> objects.</span>
+              </div>
+              <div class="form-actions form-actions--split lyrics-editor-actions">
+                <button type="button" class="btn btn-text" id="lyrics-beautify">Beautify &amp; validate</button>
+              </div>
+            </div>
+
+            <div id="lyrics-mode-file" class="lyrics-mode-panel hidden" role="tabpanel" aria-labelledby="lyrics-mode-btn-file">
             <div class="upload-area dropzone" id="lyrics-dropzone" tabindex="0" role="button" aria-label="Choose JSON file">
               <input type="file" id="lyrics-file" name="file" accept="application/json,.json" hidden />
               <div class="upload-area-inner" id="lyrics-dropzone-inner">
@@ -358,6 +385,7 @@
                 </p>
                 <p class="upload-area-meta" id="lyrics-file-name">No file selected</p>
               </div>
+            </div>
             </div>
 
             <div class="form-actions">
@@ -473,7 +501,7 @@
               <div class="form-row">
                 <div class="text-field">
                   <label class="text-field-label" for="edit-album-color">Color</label>
-                  <input class="text-field-input" type="text" id="edit-album-color" required />
+                  <input class="text-field-input" type="text" id="edit-album-color" required placeholder="rgba(6, 107, 255, 1)" />
                 </div>
                 <div class="text-field">
                   <label class="text-field-label" for="edit-album-release">Release date</label>
@@ -482,23 +510,23 @@
               </div>
               <div class="form-row">
                 <div class="text-field">
-                  <label class="text-field-label" for="edit-album-added-date">Added date</label>
-                  <input class="text-field-input" type="date" id="edit-album-added-date" required />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="text-field">
                   <label class="text-field-label" for="edit-album-light">Light color <span class="optional">(optional)</span></label>
-                  <input class="text-field-input" type="text" id="edit-album-light" />
+                  <input class="text-field-input" type="text" id="edit-album-light" placeholder="rgba(174, 203, 250, 1)" />
                 </div>
                 <div class="text-field">
                   <label class="text-field-label" for="edit-album-dark">Dark color <span class="optional">(optional)</span></label>
-                  <input class="text-field-input" type="text" id="edit-album-dark" />
+                  <input class="text-field-input" type="text" id="edit-album-dark" placeholder="rgba(23, 78, 166, 1)" />
                 </div>
               </div>
-              <div class="text-field">
-                <label class="text-field-label" for="edit-album-thumbnail">Thumbnail URL</label>
-                <input class="text-field-input" type="url" id="edit-album-thumbnail" required />
+              <div class="form-row form-row--thumbnail-date">
+                <div class="text-field">
+                  <label class="text-field-label" for="edit-album-thumbnail">Thumbnail URL</label>
+                  <input class="text-field-input" type="url" id="edit-album-thumbnail" required />
+                </div>
+                <div class="text-field text-field--added-date">
+                  <label class="text-field-label" for="edit-album-added-date">Added date</label>
+                  <input class="text-field-input" type="date" id="edit-album-added-date" required />
+                </div>
               </div>
               <div class="form-actions form-actions--split">
                 <button type="button" class="btn btn-text" id="edit-album-cancel">Cancel</button>

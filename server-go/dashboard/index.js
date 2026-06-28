@@ -48,11 +48,26 @@ function todayDateString() {
 }
 
 function setAlbumAddedDateDefault() {
-  const input = document.getElementById("album-added-date");
-  if (input) input.value = todayDateString();
+  const today = todayDateString();
+  const uploadInput = document.getElementById("album-added-date");
+  if (uploadInput) uploadInput.value = today;
+  const editInput = document.getElementById("edit-album-added-date");
+  if (editInput && !editInput.value) editInput.value = today;
 }
 
-setAlbumAddedDateDefault();
+function initAlbumAddedDateDefaults() {
+  setAlbumAddedDateDefault();
+}
+
+function getAlbumAddedDate(inputId) {
+  return document.getElementById(inputId)?.value || todayDateString();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAlbumAddedDateDefaults);
+} else {
+  initAlbumAddedDateDefaults();
+}
 
 let unauthorizedHandled = false;
 
@@ -164,12 +179,6 @@ function convertTitleForFolder(title) {
     else name += char;
   }
   return name;
-}
-
-function suggestLyricsFilename(trackTitle) {
-  const base = convertTitleForFolder(trackTitle.trim());
-  if (!base) return "";
-  return base.endsWith(".json") ? base : `${base}.json`;
 }
 
 const STATUS_ICONS = {
@@ -489,11 +498,7 @@ if (albumMetaForm) {
       return;
     }
 
-    const addedDate = document.getElementById("album-added-date")?.value || "";
-    if (!addedDate) {
-      showStatus(albumMetaStatus, "error", "Added date is required.");
-      return;
-    }
+    const addedDate = getAlbumAddedDate("album-added-date");
 
     const albumId = document.getElementById("album-album-id")?.value.trim() || "";
     if (!/^[a-fA-F0-9]{24}$/.test(albumId)) {
@@ -649,12 +654,10 @@ setupDropzone(trackDropzone, trackFileInput, trackFileName, (file) => {
   if (!trackTitleInput.value.trim()) {
     const guessed = file.name.replace(/\.mp3$/i, "");
     trackTitleInput.value = guessed;
-    syncLyricsFilename();
   }
 });
 
 trackTitleInput.addEventListener("input", () => {
-  syncLyricsFilename();
   const metaTitle = document.getElementById("track-meta-title");
   if (metaTitle && !metaTitle.value.trim()) {
     metaTitle.value = trackTitleInput.value;
@@ -664,17 +667,6 @@ trackTitleInput.addEventListener("input", () => {
     metaUrl.value = `tracks/${convertTitleForFolder(trackTitleInput.value)}/output.m3u8`;
   }
 });
-
-function syncLyricsFilename() {
-  const lyricsFilename = document.getElementById("lyrics-filename");
-  if (!lyricsFilename.value.trim() || lyricsFilename.dataset.auto === "true") {
-    const suggested = suggestLyricsFilename(trackTitleInput.value);
-    if (suggested) {
-      lyricsFilename.value = suggested;
-      lyricsFilename.dataset.auto = "true";
-    }
-  }
-}
 
 trackForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -735,12 +727,120 @@ const lyricsFilenameInput = document.getElementById("lyrics-filename");
 const lyricsFileInput = document.getElementById("lyrics-file");
 const lyricsDropzone = document.getElementById("lyrics-dropzone");
 const lyricsFileName = document.getElementById("lyrics-file-name");
+const lyricsJsonEditor = document.getElementById("lyrics-json-editor");
 const lyricsSubmit = document.getElementById("lyrics-submit");
 const lyricsSpinner = document.getElementById("lyrics-spinner");
 const lyricsStatus = document.getElementById("lyrics-status");
+const lyricsModeTabs = document.querySelectorAll("[data-lyrics-mode]");
+const lyricsModePanels = {
+  editor: document.getElementById("lyrics-mode-editor"),
+  file: document.getElementById("lyrics-mode-file"),
+};
+
+function getLyricsUploadMode() {
+  return document.querySelector(".lyrics-mode-tab.active")?.dataset.lyricsMode || "editor";
+}
+
+function setLyricsUploadMode(mode) {
+  lyricsModeTabs.forEach((tab) => {
+    const active = tab.dataset.lyricsMode === mode;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  Object.entries(lyricsModePanels).forEach(([key, panel]) => {
+    if (!panel) return;
+    panel.classList.toggle("active", key === mode);
+    panel.classList.toggle("hidden", key !== mode);
+  });
+}
+
+lyricsModeTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    setLyricsUploadMode(tab.dataset.lyricsMode);
+    hideStatus(lyricsStatus);
+  });
+});
+
+function parseLyricsJson(text) {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    throw new Error("Paste lyrics JSON before uploading.");
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch (err) {
+    throw new Error(`Invalid JSON: ${err.message}`);
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error("Lyrics JSON must be an array.");
+  }
+
+  return parsed;
+}
+
+function formatLyricsJson(text) {
+  const parsed = parseLyricsJson(text);
+  return JSON.stringify(parsed, null, 2);
+}
+
+function normalizeLyricsFilename(raw) {
+  const filename = raw.trim();
+  if (!filename) {
+    throw new Error("Filename is required.");
+  }
+  return filename;
+}
+
+function createLyricsJsonFile(jsonText, filename) {
+  return new File([jsonText], filename, { type: "application/json" });
+}
+
+async function postLyricsUpload(file, filename) {
+  const formData = new FormData();
+  formData.append("filename", filename);
+  formData.append("file", file);
+
+  const res = await dashboardFetch(API.lyrics, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error(await parseErrorResponse(res));
+  }
+
+  return res.json();
+}
+
+function resetLyricsFileUpload() {
+  lyricsFileInput.value = "";
+  lyricsDropzone.classList.remove("has-file");
+  lyricsFileName.textContent = "No file selected";
+}
+
+function resetLyricsEditorUpload() {
+  if (lyricsJsonEditor) lyricsJsonEditor.value = "";
+}
 
 lyricsFilenameInput.addEventListener("input", () => {
   lyricsFilenameInput.dataset.auto = "false";
+});
+
+document.getElementById("lyrics-beautify")?.addEventListener("click", () => {
+  hideStatus(lyricsStatus);
+
+  try {
+    const formatted = formatLyricsJson(lyricsJsonEditor.value);
+    lyricsJsonEditor.value = formatted;
+    showStatus(lyricsStatus, "success", "Valid JSON — formatted.");
+  } catch (err) {
+    showStatus(lyricsStatus, "error", err.message || "Invalid JSON.");
+    lyricsJsonEditor.focus();
+  }
 });
 
 setupDropzone(lyricsDropzone, lyricsFileInput, lyricsFileName, (file) => {
@@ -757,9 +857,7 @@ setupDropzone(lyricsDropzone, lyricsFileInput, lyricsFileName, (file) => {
   hideStatus(lyricsStatus);
 
   if (!lyricsFilenameInput.value.trim() || lyricsFilenameInput.dataset.auto === "true") {
-    let name = file.name;
-    if (!name.toLowerCase().endsWith(".json")) name += ".json";
-    lyricsFilenameInput.value = name;
+    lyricsFilenameInput.value = file.name;
     lyricsFilenameInput.dataset.auto = "true";
   }
 });
@@ -768,53 +866,56 @@ lyricsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   hideStatus(lyricsStatus);
 
-  let filename = lyricsFilenameInput.value.trim();
-  const file = lyricsFileInput.files?.[0];
-
-  if (!filename) {
-    showStatus(lyricsStatus, "error", "Filename is required.");
+  let filename;
+  try {
+    filename = normalizeLyricsFilename(lyricsFilenameInput.value);
+    lyricsFilenameInput.value = filename;
+  } catch (err) {
+    showStatus(lyricsStatus, "error", err.message);
     lyricsFilenameInput.focus();
     return;
   }
-  if (!filename.toLowerCase().endsWith(".json")) {
-    filename += ".json";
-    lyricsFilenameInput.value = filename;
-  }
-  if (!file) {
-    showStatus(lyricsStatus, "error", "Choose a JSON lyrics file.");
-    return;
-  }
 
-  const formData = new FormData();
-  formData.append("filename", filename);
-  formData.append("file", file);
-
-  setLoading(lyricsSubmit, lyricsSpinner, true);
+  const mode = getLyricsUploadMode();
+  let uploadFile = null;
 
   try {
-    const res = await dashboardFetch(API.lyrics, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      throw new Error(await parseErrorResponse(res));
+    if (mode === "editor") {
+      const jsonText = formatLyricsJson(lyricsJsonEditor.value);
+      lyricsJsonEditor.value = jsonText;
+      uploadFile = createLyricsJsonFile(jsonText, filename);
+    } else {
+      uploadFile = lyricsFileInput.files?.[0];
+      if (!uploadFile) {
+        showStatus(lyricsStatus, "error", "Choose a JSON lyrics file.");
+        return;
+      }
     }
 
-    const data = await res.json();
+    setLoading(lyricsSubmit, lyricsSpinner, true);
+
+    const data = await postLyricsUpload(uploadFile, filename);
+    uploadFile = null;
+
     showStatus(
       lyricsStatus,
       "success",
       `Lyrics uploaded.${data.key ? ` Key: ${data.key}` : ""}`
     );
-    lyricsFileInput.value = "";
-    lyricsDropzone.classList.remove("has-file");
-    lyricsFileName.textContent = "No file selected";
+
+    if (mode === "editor") {
+      resetLyricsEditorUpload();
+    } else {
+      resetLyricsFileUpload();
+    }
   } catch (err) {
     if (shouldIgnoreFetchError(err)) return;
     showStatus(lyricsStatus, "error", err.message || "Upload failed.");
+    if (mode === "editor") {
+      lyricsJsonEditor.focus();
+    }
   } finally {
+    uploadFile = null;
     setLoading(lyricsSubmit, lyricsSpinner, false);
   }
 });
@@ -1018,11 +1119,7 @@ if (editAlbumForm) {
       return;
     }
 
-    const addedDate = document.getElementById("edit-album-added-date")?.value || "";
-    if (!addedDate) {
-      showStatus(editAlbumStatus, "error", "Added date is required.");
-      return;
-    }
+    const addedDate = getAlbumAddedDate("edit-album-added-date");
 
     const albumId = document.getElementById("edit-album-id")?.value.trim() || "";
     if (!/^[a-fA-F0-9]{24}$/.test(albumId)) {
