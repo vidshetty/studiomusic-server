@@ -245,7 +245,7 @@ const getRecentlyAdded = async (newReleases: AlbumList[]): Promise<AlbumList[]> 
         .find({
             _albumId: { $nin: _.map(newReleases, e => new ObjectId(e._albumId)) }
         })
-        .sort({ addedDate: -1 })
+        .sort({ addedDate: -1, _id: -1 })
         .limit(6)
         .toArray() as AlbumSchema[];
 

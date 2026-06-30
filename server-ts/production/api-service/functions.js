@@ -173,7 +173,7 @@ const getRecentlyAdded = async (newReleases) => {
         .find({
         _albumId: { $nin: lodash_1.default.map(newReleases, e => new mongodb_1.ObjectId(e._albumId)) }
     })
-        .sort({ addedDate: -1 })
+        .sort({ addedDate: -1, _id: -1 })
         .limit(6)
         .toArray();
     const tracks = await Tracks.find({
